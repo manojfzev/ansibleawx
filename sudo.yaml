@@ -1,0 +1,31 @@
+---
+
+- name: Sudo access
+  hosts: web
+  vars:
+     filepath: /etc/sudoers.d/sudo-access     
+  gather_facts: no
+  tasks:    
+       
+     - name: create sudo file if the file does not exist
+       file:
+          path: "{{ filepath }}"
+          owner: root
+          group: root
+          mode: '0644'
+          state: touch
+       become: yes
+       register: filestat
+       ignore_unreachable: True
+       ignore_errors: True
+
+     - name:  Add sudo access to the file
+       lineinfile:
+          path: "{{ filepath }}"
+          line: "ansible ALL=(ALL) NOPASSWD:ALL"
+          validate: /usr/sbin/visudo -cf %s
+       become: yes
+       register: appendstat
+       ignore_unreachable: True
+       ignore_errors: True
+       when: filestat is not unreachable and filestat.failed == false
