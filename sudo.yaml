@@ -22,7 +22,7 @@
      - name:  Add sudo access to the file
        lineinfile:
           path: "{{ filepath }}"
-          line: "ansible ALL=(ALL) NOPASSWD:ALL"
+          line: "testuser ALL=(ALL) NOPASSWD:ALL"
           validate: /usr/sbin/visudo -cf %s
        become: yes
        register: appendstat
