@@ -1,0 +1,3 @@
+- name: Extract more data 
+  ansible.builtin.set fact:
+   real _data: "{{ alldata.query result | json_query('[*].fieldname')}}"
