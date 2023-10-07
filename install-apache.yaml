@@ -1,0 +1,30 @@
+---
+- name: Install Apache HTTP Server
+  hosts: your_target_server  # Replace with the hostname or IP address of your target server
+  become: yes  # Enable privilege escalation (sudo)
+
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes  # For Debian/Ubuntu-based systems
+      when: ansible_distribution == 'Ubuntu'  # Adjust for your distribution
+
+    - name: Install Apache
+      apt:
+        name: apache2  # Package name for Apache
+        state: present  # Ensure Apache is installed
+      when: ansible_distribution == 'Ubuntu'  # Adjust for your distribution
+
+    - name: Start Apache and enable on boot
+      systemd:
+        name: apache2
+        enabled: yes
+        state: started
+      when: ansible_distribution == 'Ubuntu'  # Adjust for your distribution
+
+
+    - name: Ensure Apache service is running
+      systemd:
+        name: apache2
+        state: started
+      when: ansible_distribution == 'Ubuntu'  # Adjust for your distribution
