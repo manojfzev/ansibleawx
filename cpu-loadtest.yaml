@@ -1,6 +1,6 @@
 ---
 - name: High CPU Load Test
-  hosts: your_target_server  # Replace with the hostname or IP address of your target server
+  hosts: all  # Replace with the hostname or IP address of your target server
   gather_facts: no
   tasks:
     - name: Run High CPU Load
