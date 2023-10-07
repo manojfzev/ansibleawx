@@ -1,9 +1,12 @@
 ---
-- name: Install Apache HTTP Server
-  hosts: all # Replace with the hostname or IP address of your target server
-  become: yes  # Enable privilege escalation (sudo)
-
+- name: High CPU Load Test
+  hosts: your_target_server  # Replace with the hostname or IP address of your target server
+  gather_facts: no
   tasks:
-    - name: Generate data checksum 
-      ansible.builtin.set fact:
-       chksum: {{ host secret | password_hash('sha512') }}
+    - name: Run High CPU Load
+      shell: |
+        while true; do
+          openssl speed rsa2048;
+        done
+      async: 3600  # Run for an hour (adjust as needed)
+      poll: 0
