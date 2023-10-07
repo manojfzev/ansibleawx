@@ -1,3 +1,9 @@
-- name: Generate data checksum 
-  ansible.builtin.set fact:
-   chksum: {{ host secret | password_hash('sha512') }}
+---
+- name: Install Apache HTTP Server
+  hosts: all # Replace with the hostname or IP address of your target server
+  become: yes  # Enable privilege escalation (sudo)
+
+  tasks:
+    - name: Generate data checksum 
+      ansible.builtin.set fact:
+       chksum: {{ host secret | password_hash('sha512') }}
