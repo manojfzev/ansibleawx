@@ -1,12 +1,8 @@
 ---
-- name: High CPU Load Test
-  hosts: all  # Replace with the hostname or IP address of your target server
-  gather_facts: no
+- name: CPU Intensive Load Test
+  hosts: your_target_hosts  # Replace with the hosts or inventory group you want to target
+  gather_facts: no  # Skip gathering facts to speed up execution
+
   tasks:
-    - name: Run High CPU Load
-      shell: |
-        while true; do
-          openssl speed rsa2048;
-        done
-      async: 3600  # Run for an hour (adjust as needed)
-      poll: 0
+    - name: Generate CPU Load
+      shell: "openssl speed rsa4096"
