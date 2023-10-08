@@ -1,6 +1,6 @@
 ---
 - name: CPU Intensive Load Test
-  hosts: your_target_hosts  # Replace with the hosts or inventory group you want to target
+  hosts: all  # Replace with the hosts or inventory group you want to target
   gather_facts: no  # Skip gathering facts to speed up execution
 
   tasks:
