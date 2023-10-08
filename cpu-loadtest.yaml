@@ -1,8 +1,12 @@
 ---
-- name: CPU Intensive Load Test
+- name: CPU Intensive Load Test with Output
   hosts: all  # Replace with the hosts or inventory group you want to target
   gather_facts: no  # Skip gathering facts to speed up execution
 
   tasks:
-    - name: Generate CPU Load
-      shell: "openssl speed rsa4096"
+    - name: Generate CPU Load with Output
+      shell: |
+        for i in {1..10}; do
+          echo "Performing CPU-intensive task iteration $i"
+          openssl speed rsa4096
+        done
