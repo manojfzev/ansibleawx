@@ -1,0 +1,85 @@
+---
+- name: Install Docker and Run Nginx Container
+  hosts: all
+  become: yes
+  tasks:
+    - name: Distribution
+      debug: msg="{{ ansible_distribution }}"
+    - name: Distribution version
+      debug: msg="{{ ansible_os_family }}"
+
+    - name: Set Python interpreter in Amazon Linux
+      when: "'Amazon' in ansible_distribution"
+      ansible.builtin.set_fact:
+       ansible_python_interpreter: >-
+          {% if ansible_distribution == 'Amazon' %}
+            /usr/bin/python2
+          {% endif %}
+
+    - name: Install Docker on Redhat
+      when: "'RedHat' in ansible_distribution"
+      block:
+        - name: Copy Docker repo
+          copy:
+            src: docker-ce.repo
+            dest: /etc/yum.repos.d/docker-ce.repo
+            owner: root
+            group: root
+            mode: '0644'
+        - name: Install Docker Package on Redhat
+          yum:
+            name: "{{item}}"
+            state: present
+          with_items:
+            - docker-ce
+            - docker-ce-cli
+            - containerd.io
+            - docker-buildx-plugin
+            - docker-compose-plugin
+          ignore_errors: True
+        - name: Start and enable Docker services on Redhat
+          shell:
+            cmd: systemctl enable --now docker
+
+
+    - name: Install Docker on Ubuntu
+      when: "'Debian' in ansible_os_family"
+      block:
+        - name: Install Docker Package on Ubuntu
+          apt:
+            name: docker.io
+            state: present
+        - name: Start and enable Docker services on Ubuntu
+          shell:
+            cmd: systemctl enable --now docker
+
+    - name: Install Docker on Amazon Linux
+      when: "'Amazon' in ansible_distribution"
+      block:
+        - name: Install Docker Package on Amazon Linux
+          yum:
+            name: docker
+            state: present
+        - name: Start and enable Docker services on Amazon Linux
+          shell:
+            cmd: systemctl enable --now docker
+
+    - name: Install Docker on SUSE
+      when: "'Suse' in ansible_os_family"
+      block:
+        - name: Install Docker package on SUSE
+          zypper:
+            name: docker
+            state: present
+        - name: Start and enable Docker services on SUSE
+          shell:
+            cmd: systemctl enable --now docker
+
+
+    - name: Run Nginx Container
+      docker_container:
+        name: nginx_container
+        image: nginx
+        state: started
+        ports:
+          - "80:80"
