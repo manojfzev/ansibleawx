@@ -1,2 +1,2 @@
 [dd-testservers]
-ansible_ssh_host=10.138.0.[2:4]
+10.138.0.[2:4]
