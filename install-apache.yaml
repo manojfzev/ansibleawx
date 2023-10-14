@@ -4,6 +4,10 @@
   become: yes  # Enable privilege escalation (sudo)
 
   tasks:
+    - name: Debug environment variable
+      debug:
+        var: webservers
+
     - name: Update package cache
       apt:
         update_cache: yes  # For Debian/Ubuntu-based systems
