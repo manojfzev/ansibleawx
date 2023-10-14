@@ -5,9 +5,15 @@
   become: yes  # Enable privilege escalation (sudo)
 
   tasks:
+
+    - name: Set environment variable for a task
+      command: echo "This is a task with a custom environment variable"
+      environment:
+        MY_ENV_VARIABLE: "true"    
+
     - name: Debug environment variable
       debug:
-        var: webservers
+        var: MY_ENV_VARIABLE
 
     - name: Update package cache
       apt:
