@@ -7,24 +7,23 @@
     - name: Update package cache
       apt:
         update_cache: yes  # For Debian/Ubuntu-based systems
-      when: ansible_distribution == 'Ubuntu'  # Adjust for your distribution
+      when: webservers == 'true'
 
     - name: Install Apache
       apt:
         name: apache2  # Package name for Apache
         state: present  # Ensure Apache is installed
-      when: ansible_distribution == 'Ubuntu'  # Adjust for your distribution
+      when: webservers == 'true'
 
     - name: Start Apache and enable on boot
       systemd:
         name: apache2
         enabled: yes
         state: started
-      when: ansible_distribution == 'Ubuntu'  # Adjust for your distribution
-
+      when: webservers == 'true'
 
     - name: Ensure Apache service is running
       systemd:
         name: apache2
         state: started
-      when: ansible_distribution == 'Ubuntu'  # Adjust for your distribution
+      when: webservers == 'true'
