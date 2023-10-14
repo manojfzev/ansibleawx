@@ -1,21 +1,16 @@
 ---
 - name: Install Apache HTTP Server
   hosts: webservers # Replace with the hostname or IP address of your target server
-  environment:
-    MY_ENV_VAR: webservers
   gather_facts: yes
   become: yes  # Enable privilege escalation (sudo)
 
   tasks:
 
-    - name: Gather environment variables
-      gather_facts:
-        gather_env: True
-    
     - name: Update package cache
       apt:
         update_cache: yes  # For Debian/Ubuntu-based systems
       when: ansible_env.MY_ENV_VAR == 'true'
+      when: lookup('env', 'webservers') == 'true'
 
     - name: Install Apache
       apt:
