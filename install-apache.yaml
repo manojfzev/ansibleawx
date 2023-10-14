@@ -1,6 +1,6 @@
 ---
 - name: Install Apache HTTP Server
-  hosts: dd-testservers # Replace with the hostname or IP address of your target server
+  hosts: webservers # Replace with the hostname or IP address of your target server
   become: yes  # Enable privilege escalation (sudo)
 
   tasks:
