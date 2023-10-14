@@ -4,6 +4,7 @@
   environment:
     MY_ENV_VAR: webservers
   gather_facts: yes
+     gather_env: True
   become: yes  # Enable privilege escalation (sudo)
 
   tasks:
