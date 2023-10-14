@@ -4,11 +4,14 @@
   environment:
     MY_ENV_VAR: webservers
   gather_facts: yes
-     gather_env: True
   become: yes  # Enable privilege escalation (sudo)
 
   tasks:
 
+    - name: Gather environment variables
+      gather_facts:
+        gather_env: True
+    
     - name: Update package cache
       apt:
         update_cache: yes  # For Debian/Ubuntu-based systems
