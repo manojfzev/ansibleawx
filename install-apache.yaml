@@ -13,7 +13,7 @@
     - name: Update package cache
       apt:
         update_cache: yes  # For Debian/Ubuntu-based systems
-      when: lookup('env', 'webservers') == 'true'
+      when: lookup('env', 'webservers') == '*'
 
     - name: Install Apache
       apt:
