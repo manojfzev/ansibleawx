@@ -3,7 +3,6 @@
   hosts: webservers # Replace with the hostname or IP address of your target server
   environment:
     MY_ENV_VAR: webservers
-  when: ansible_env.MY_ENV_VAR == 'true'
   gather_facts: no
   become: yes  # Enable privilege escalation (sudo)
 
@@ -12,6 +11,7 @@
     - name: Update package cache
       apt:
         update_cache: yes  # For Debian/Ubuntu-based systems
+      when: ansible_env.MY_ENV_VAR == 'true'
 
     - name: Install Apache
       apt:
