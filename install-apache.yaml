@@ -13,12 +13,10 @@
     - name: Print Environment Variable Value
       debug:
         var: env_variable_output.stdout
-
-
     - name: Update package cache
       apt:
         update_cache: yes  # For Debian/Ubuntu-based systems
-      when: lookup('env', 'webservers') == '*'
+      when: env_variable_output.stdout == "true"
 
     - name: Install Apache
       apt:
