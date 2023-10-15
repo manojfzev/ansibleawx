@@ -6,9 +6,14 @@
 
   tasks:
 
-    - name: Debug environment variable
+    - name: Run a Command to Check Environment Variable
+      command: echo $webservers  # Replace with the variable name you want to check
+      register: env_variable_output
+
+    - name: Print Environment Variable Value
       debug:
-        var: webservers
+        var: env_variable_output.stdout
+
 
     - name: Update package cache
       apt:
