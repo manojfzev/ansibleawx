@@ -1,37 +1,50 @@
-#!/usr/bin/env python
-
-import json
 import os
+import subprocess
 
-# Define the IP range
-ip_range = range(2, 9)  # IP addresses 10.138.0.2 to 10.138.0.8
+def get_dynamic_inventory():
+  """Returns a dynamic inventory based on the following conditions:
+    * IP range 10.138.0.2 - 10.138.0.4
+    * OS environment variable "webservers"
+    * Login credentials
+  """
 
-# Fetch the value of the environment variable "webservers"
-webservers_env = os.environ.get('webservers', 'false')
+  # Get the IP range
+  ip_range = range(10138002, 10138008)
 
-# Define the Ansible SSH user and SSH password to be used for all hosts
-ansible_ssh_user = "ansible"
-ssh_password = "redhat"
+  # Get the webservers environment variable
+  webservers = os.environ.get("webservers")
 
-# Create an empty dictionary to store host variables
-hostvars = {}
+  # Get the login credentials
+  username = "ansible"
+  password = "redhat"
 
-# Create the inventory structure
-inventory = {
-    "_meta": {
-        "hostvars": hostvars
-    },
+  # Create a list of hosts
+  hosts = []
+  for ip in ip_range:
+    if webservers is not None and ip in webservers:
+      # SSH to the host to get the environment variables
+      cmd = f"sshpass -p {password} ssh {username}@{ip} \"env\""
+      proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+      output, err = proc.communicate()
+      proc.wait()
+
+      # Parse the environment variables from the output
+      env_vars = dict(line.split("=") for line in output.decode("utf-8").split("\n"))
+
+      # Add the host to the list, with the environment variables
+      hosts.append({
+        "hostname": ip,
+        "ansible_user": username,
+        "ansible_ssh_pass": password,
+        "env_vars": env_vars
+      })
+
+  # Return the inventory
+  return {
     "all": {
-        "hosts": [f"10.138.0.{ip}" for ip in ip_range]
-    }
-}
+      "hosts": hosts,
+    },
+  }
 
-# Set the Ansible SSH user, SSH password, and any additional variables based on the "webservers" environment variable
-for host in inventory["all"]["hosts"]:
-    hostvars[host] = {
-        "ansible_ssh_user": ansible_ssh_user,
-        "ansible_ssh_pass": ssh_password,
-        "webservers": webservers_env
-    }
-
-print(json.dumps(inventory))
+# Print the inventory
+print(get_dynamic_inventory())
