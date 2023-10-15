@@ -22,17 +22,17 @@
       apt:
         name: apache2  # Package name for Apache
         state: present  # Ensure Apache is installed
-      when: webservers == 'true'
+      when: env_variable_output.stdout == "true"
 
     - name: Start Apache and enable on boot
       systemd:
         name: apache2
         enabled: yes
         state: started
-      when: webservers == 'true'
+      when: env_variable_output.stdout == "true"
 
     - name: Ensure Apache service is running
       systemd:
         name: apache2
         state: started
-      when: webservers == 'true'
+      when: env_variable_output.stdout == "true"
