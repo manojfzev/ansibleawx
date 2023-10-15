@@ -1,50 +1,56 @@
+#!/usr/bin/env python
+
 import os
+import json
+import socket
 import subprocess
+import time
+from ipaddress import IPv4Network
 
-def get_dynamic_inventory():
-  """Returns a dynamic inventory based on the following conditions:
-    * IP range 10.138.0.2 - 10.138.0.4
-    * OS environment variable "webservers"
-    * Login credentials
-  """
+# Define the IP range with a /29 subnet mask (covers 10.138.0.2 - 10.138.0.8)
+ip_range = IPv4Network('10.138.0.0/24')
 
-  # Get the IP range
-  ip_range = range(10138002, 10138008)
+# Define the environment variable to check
+desired_environment_variable = "webservers"
 
-  # Get the webservers environment variable
-  webservers = os.environ.get("webservers")
+# Define SSH credentials
+ssh_username = "ansible"
+ssh_password = "redhat"  # Replace with your SSH password
+ssh_timeout = 5  # Set the SSH timeout in seconds
 
-  # Get the login credentials
-  username = "ansible"
-  password = "redhat"
-
-  # Create a list of hosts
-  hosts = []
-  for ip in ip_range:
-    if webservers is not None and ip in webservers:
-      # SSH to the host to get the environment variables
-      cmd = f"sshpass -p {password} ssh {username}@{ip} \"env\""
-      proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-      output, err = proc.communicate()
-      proc.wait()
-
-      # Parse the environment variables from the output
-      env_vars = dict(line.split("=") for line in output.decode("utf-8").split("\n"))
-
-      # Add the host to the list, with the environment variables
-      hosts.append({
-        "hostname": ip,
-        "ansible_user": username,
-        "ansible_ssh_pass": password,
-        "env_vars": env_vars
-      })
-
-  # Return the inventory
-  return {
-    "all": {
-      "hosts": hosts,
+# Initialize an empty inventory
+inventory = {
+    "_meta": {
+        "hostvars": {}
     },
-  }
+    "webservers": {
+        "hosts": []
+    }
+}
 
-# Print the inventory
-print(get_dynamic_inventory())
+# Function to check if the environment variable exists on a host
+def environment_variable_exists(host):
+    try:
+        cmd = ["sshpass", "-p", ssh_password, "ssh", "-o", "StrictHostKeyChecking=no", "-o", "ConnectTimeout=" + str(ssh_timeout), ssh_username + "@" + host, "echo $" + desired_environment_variable]
+        output = subprocess.check_output(cmd, timeout=ssh_timeout)
+        return output.decode().strip().lower()
+    except subprocess.CalledProcessError:
+        return False
+    except subprocess.TimeoutExpired:
+        return False
+
+# Iterate through the IP range and check for hosts
+for ip in ip_range.hosts():
+    host = str(ip)
+    try:
+        socket.gethostbyaddr(host)
+        if environment_variable_exists(host):
+            inventory["webservers"]["hosts"].append(host)
+            inventory["_meta"]["hostvars"][host] = {
+                "ansible_ssh_user": ssh_username
+            }
+    except (socket.herror, TimeoutError):
+        pass
+
+# Print the JSON representation of the inventory
+print(json.dumps(inventory, indent=2))
