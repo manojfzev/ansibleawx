@@ -15,7 +15,7 @@ desired_environment_variable = "webservers"
 
 # Define SSH credentials
 ssh_username = "ansible"
-ssh_password = os.environ.get('ssh_password')
+ssh_password = os.environ.get('MY_PASSWORD')
 ssh_timeout = 5  # Set the SSH timeout in seconds
 
 # Initialize an empty inventory
