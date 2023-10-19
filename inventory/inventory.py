@@ -20,6 +20,7 @@ desired_environment_variable = "webservers"
 ssh_username = "ansible"
 ssh_private_key_secret = "ssh-key-secret"  # Name of the Kubernetes Secret
 ssh_timeout = 5  # Set the SSH timeout in seconds
+ssh_private_key_secret_namespace = "awx"
 
 # Initialize an empty inventory
 inventory = {
@@ -41,7 +42,7 @@ def environment_variable_exists(host):
         v1 = client.CoreV1Api()
 
         # Retrieve the SSH private key from the Kubernetes Secret
-        secret = v1.read_namespaced_secret(name=ssh_private_key_secret)
+        secret = v1.read_namespaced_secret(name=ssh_private_key_secret, namespace=ssh_private_key_secret_namespace)
         ssh_private_key_base64 = secret.data["ssh-privatekey"]
         ssh_private_key = base64.b64decode(ssh_private_key_base64).decode()
 
