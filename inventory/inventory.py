@@ -6,9 +6,9 @@ import socket
 import subprocess
 import time
 from ipaddress import IPv4Network
-from io import StringIO
 import base64
-import paramiko  # Added paramiko import
+import paramiko
+from kubernetes import client, config
 
 # Define the IP range with a /29 subnet mask (covers 10.138.0.2 - 10.138.0.8)
 ip_range = IPv4Network('10.138.0.0/24')
@@ -34,36 +34,36 @@ inventory = {
 # Function to check if the environment variable exists on a host
 def environment_variable_exists(host):
     try:
-        # Retrieve the SSH private key from the Kubernetes Secret
-        cmd = [
-            "kubectl",
-            "get",
-            "secret",
-            ssh_private_key_secret,
-            "-o",
-            "json"
-        ]
-        output = subprocess.check_output(cmd)
-        secret_data = json.loads(output)
-        ssh_private_key = secret_data["data"]["ssh-privatekey"]
+        # Configure the Kubernetes client using an in-cluster config
+        config.load_incluster_config()
         
+        # Create a Kubernetes API client
+        v1 = client.CoreV1Api()
+
+        # Retrieve the SSH private key from the Kubernetes Secret
+        secret = v1.read_namespaced_secret(name=ssh_private_key_secret, namespace=ssh_private_key_secret_namespace)
+        ssh_private_key_base64 = secret.data["ssh-privatekey"]
+        ssh_private_key = base64.b64decode(ssh_private_key_base64).decode()
+
         # Create an SSH client
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
         # Load the SSH private key from the Secret
-        private_key = paramiko.RSAKey(file_obj=StringIO(base64.b64decode(ssh_private_key).decode()))
+        private_key = paramiko.RSAKey(file_obj=paramiko.StringIO(ssh_private_key))
         ssh.connect(host, username=ssh_username, pkey=private_key, timeout=ssh_timeout)
 
         # Run a command on the remote host to check the environment variable
         stdin, stdout, stderr = ssh.exec_command("echo $" + desired_environment_variable)
         result = stdout.read().decode().strip().lower()
-        
+
         # Close the SSH connection
         ssh.close()
-        
+
         return result
-    except (subprocess.CalledProcessError, paramiko.ssh_exception.SSHException):
+    except (paramiko.ssh_exception.SSHException, client.rest.ApiException):
+        return False
+    except paramiko.ssh_exception.AuthenticationException:
         return False
     except subprocess.TimeoutExpired:
         return False
