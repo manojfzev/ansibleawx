@@ -1,6 +1,6 @@
 ---
 - name: Install Apache HTTP Server
-  hosts: webservers # Replace with the hostname or IP address of your target server
+  hosts: all # Replace with the hostname or IP address of your target server
   gather_facts: no
   become: yes  # Enable privilege escalation (sudo)
 
