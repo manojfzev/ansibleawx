@@ -15,7 +15,7 @@ desired_environment_variable = "webservers"
 
 # Define SSH credentials
 ssh_username = "ansible"
-ssh_password = os.environ.get('MY_PASSWORD')
+ssh_private_key_file = "/mnt/ssh/ssh-privatekey
 ssh_timeout = 5  # Set the SSH timeout in seconds
 
 # Initialize an empty inventory
@@ -31,7 +31,7 @@ inventory = {
 # Function to check if the environment variable exists on a host
 def environment_variable_exists(host):
     try:
-        cmd = ["sshpass", "-p", ssh_password, "ssh", "-o", "StrictHostKeyChecking=no", "-o", "ConnectTimeout=" + str(ssh_timeout), ssh_username + "@" + host, "echo $" + desired_environment_variable]
+        cmd = ["ssh", "-i", ssh_private_key_file, "-o", "StrictHostKeyChecking=no", "-o", "ConnectTimeout=" + str(ssh_timeout), ssh_username + "@" + host, "echo $" + desired_environment_variable]
         output = subprocess.check_output(cmd, timeout=ssh_timeout)
         return output.decode().strip().lower()
     except subprocess.CalledProcessError:
