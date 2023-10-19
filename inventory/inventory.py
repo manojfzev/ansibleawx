@@ -15,7 +15,7 @@ desired_environment_variable = "webservers"
 
 # Define SSH credentials
 ssh_username = "ansible"
-ssh_private_key_file = "/mnt/ssh/ssh-privatekey
+ssh_private_key_file = "/mnt/ssh/ssh-privatekey"
 ssh_timeout = 5  # Set the SSH timeout in seconds
 
 # Initialize an empty inventory
