@@ -41,7 +41,7 @@ def environment_variable_exists(host):
         v1 = client.CoreV1Api()
 
         # Retrieve the SSH private key from the Kubernetes Secret
-        secret = v1.read_namespaced_secret(name=ssh_private_key_secret, namespace=ssh_private_key_secret_namespace)
+        secret = v1.read_namespaced_secret(name=ssh_private_key_secret)
         ssh_private_key_base64 = secret.data["ssh-privatekey"]
         ssh_private_key = base64.b64decode(ssh_private_key_base64).decode()
 
