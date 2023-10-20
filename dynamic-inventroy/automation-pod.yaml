@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: run-for-1-hour
+spec:
+  serviceAccountName: sshprivatekey
+  automountServiceAccountToken: true
+  containers:
+  - name: my-container
+    image: quay.io/ansible/awx-ee:latest
+    command:
+    - "/bin/sh"
+    - "-c"
+    - "sleep 3600"  # Sleep for 1 hour (3600 seconds)
