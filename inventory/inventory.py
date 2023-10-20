@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import io
 import os
 import json
 import socket
@@ -52,7 +53,8 @@ def environment_variable_exists(host):
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
         # Load the SSH private key from the Secret
-        private_key = paramiko.RSAKey(file_obj=paramiko.StringIO(ssh_private_key))
+        private_key = io.StringIO(ssh_private_key)
+        private_key = paramiko.RSAKey(file_obj=private_key)
         ssh.connect(host, username=ssh_username, pkey=private_key, timeout=ssh_timeout)
 
         # Run a command on the remote host to check the environment variable
