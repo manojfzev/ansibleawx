@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import io
 import os
 import json
 import socket
@@ -10,6 +9,7 @@ from ipaddress import IPv4Network
 import base64
 import paramiko
 from kubernetes import client, config
+import io
 
 # Define the IP range with a /29 subnet mask (covers 10.138.0.2 - 10.138.0.8)
 ip_range = IPv4Network('10.138.0.0/24')
