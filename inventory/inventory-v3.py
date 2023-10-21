@@ -6,6 +6,10 @@ import socket
 import subprocess
 import time
 from ipaddress import IPv4Network
+import base64
+import paramiko
+from kubernetes import client, config
+import io
 
 # Define the IP range with a /29 subnet mask (covers 10.138.0.2 - 10.138.0.8)
 ip_range = IPv4Network('10.138.0.0/24')
@@ -15,10 +19,11 @@ desired_environment_variable = "webservers"
 
 # Define SSH credentials
 ssh_username = "ansible"
-ssh_private_key_file = os.environ.get('ansible_private_key_file')
 ssh_timeout = 5  # Set the SSH timeout in seconds
+ssh_private_key = os.environ.get('ansible_private_key_file')
 
-#Initialize an empty inventory
+
+# Initialize an empty inventory
 inventory = {
     "_meta": {
         "hostvars": {}
@@ -30,11 +35,39 @@ inventory = {
 
 # Function to check if the environment variable exists on a host
 def environment_variable_exists(host):
-    try:        
-        cmd = ["ssh", "-i", ssh_private_key_file, "-o", "StrictHostKeyChecking=no", "-o", "ConnectTimeout=" + str(ssh_timeout), ssh_username + "@" + host, "echo $" + desired_environment_variable]
-        output = subprocess.check_output(cmd, timeout=ssh_timeout)
-        return output.decode().strip().lower()
-    except subprocess.CalledProcessError:
+    try:
+        # # Configure the Kubernetes client using an in-cluster config
+        # config.load_incluster_config()
+        
+        # # Create a Kubernetes API client
+        # v1 = client.CoreV1Api()
+
+        # Retrieve the SSH private key from the Kubernetes Secret
+        # secret = v1.read_namespaced_secret(name=ssh_private_key_secret, namespace=ssh_private_key_secret_namespace)
+        # ssh_private_key_base64 = secret.data["ssh-privatekey"]
+        ssh_private_key = base64.b64decode(ssh_private_key_base64).decode()
+        
+
+        # Create an SSH client
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+        # Load the SSH private key from the Secret
+        private_key = io.StringIO(ssh_private_key)
+        private_key = paramiko.RSAKey(file_obj=private_key)
+        ssh.connect(host, username=ssh_username, pkey=private_key, timeout=ssh_timeout)
+
+        # Run a command on the remote host to check the environment variable
+        stdin, stdout, stderr = ssh.exec_command("echo $" + desired_environment_variable)
+        result = stdout.read().decode().strip().lower()
+
+        # Close the SSH connection
+        ssh.close()
+
+        return result
+    except (paramiko.ssh_exception.SSHException, client.rest.ApiException):
+        return False
+    except paramiko.ssh_exception.AuthenticationException:
         return False
     except subprocess.TimeoutExpired:
         return False
