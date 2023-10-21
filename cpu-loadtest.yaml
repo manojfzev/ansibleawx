@@ -1,7 +1,7 @@
 ---
 - name: CPU Intensive Load Test with Output
   hosts: all  # Replace with the hosts or inventory group you want to target
-  gather_facts: no  # Skip gathering facts to speed up execution
+  gather_facts: yes  # Skip gathering facts to speed up execution
 
   tasks:
     - name: Generate CPU Load with Output
