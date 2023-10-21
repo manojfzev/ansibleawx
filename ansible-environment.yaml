@@ -1,11 +1,19 @@
----
-- name: Print Ansible environment
-  hosts: all  # Replace with the hosts or inventory group you want to target
-  gather_facts: yes  # Skip gathering facts to speed up execution
-
+- name: Read content from a file and print it
+  hosts: all
   tasks:
-    - name: Get environment
+    - name: Get the file name from debug output
       debug:
-        msg: "{{ my_ssh_key_file.stdout }}"
+        msg: "{{ my_ssh_key_file.stdout }}"  # Replace with the actual message
+      register: debug_output
 
-      
+    - name: Extract the file name from the debug output
+      set_fact:
+        file_name: "{{ debug_output.msg.split()[-1] }}"  # Extract the last word from the message
+
+    - name: Read content from the file
+      shell: cat "{{ file_name }}"
+      register: file_content
+
+    - name: Print file content using msg
+      msg:
+        var: file_content.stdout
