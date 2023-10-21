@@ -6,4 +6,6 @@
   tasks:
     - name: Get environment
       debug:
-        msg: "{{ my_ssh_key_file }}"
+        msg: "{{ my_ssh_key_file.stdout }}"
+
+      
