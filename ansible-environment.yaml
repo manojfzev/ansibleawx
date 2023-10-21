@@ -1,20 +1,9 @@
-- name: Read content from a file and print it
-  hosts: all
+---
+- name: Print OS Environment Variables
+  hosts: localhost
   gather_facts: yes
+
   tasks:
-    - name: Get the file name from debug output
+    - name: Print OS Environment Variables
       debug:
-        msg: "{{ my_ssh_key_file }}"  # Replace with the actual message
-      register: debug_output
-
-    - name: Extract the file name from the debug output
-      set_fact:
-        file_name: "{{ debug_output.msg.split()[-1] }}"  # Extract the last word from the message
-
-    - name: Read content from the file
-      shell: cat "{{ file_name }}"
-      register: file_content
-
-    - name: Print file content using debug module
-      debug:
-        msg: file_content.stdout
+        var: ansible_env
