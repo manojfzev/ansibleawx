@@ -31,6 +31,7 @@ inventory = {
 # Function to check if the environment variable exists on a host
 def environment_variable_exists(host):
     try:
+        print(ssh_private_key_file)
         cmd = ["ssh", "-i", ssh_private_key_file, "-o", "StrictHostKeyChecking=no", "-o", "ConnectTimeout=" + str(ssh_timeout), ssh_username + "@" + host, "echo $" + desired_environment_variable]
         output = subprocess.check_output(cmd, timeout=ssh_timeout)
         return output.decode().strip().lower()
