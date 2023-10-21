@@ -45,7 +45,7 @@ def environment_variable_exists(host):
         # Retrieve the SSH private key from the Kubernetes Secret
         # secret = v1.read_namespaced_secret(name=ssh_private_key_secret, namespace=ssh_private_key_secret_namespace)
         # ssh_private_key_base64 = secret.data["ssh-privatekey"]
-        ssh_private_key = base64.b64decode(ssh_private_key_base64).decode()
+        #ssh_private_key = base64.b64decode(ssh_private_key_base64).decode()
         
 
         # Create an SSH client
