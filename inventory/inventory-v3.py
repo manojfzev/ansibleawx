@@ -35,19 +35,8 @@ inventory = {
 
 # Function to check if the environment variable exists on a host
 def environment_variable_exists(host):
-    try:
-        # # Configure the Kubernetes client using an in-cluster config
-        # config.load_incluster_config()
+    try:  
         
-        # # Create a Kubernetes API client
-        # v1 = client.CoreV1Api()
-
-        # Retrieve the SSH private key from the Kubernetes Secret
-        # secret = v1.read_namespaced_secret(name=ssh_private_key_secret, namespace=ssh_private_key_secret_namespace)
-        # ssh_private_key_base64 = secret.data["ssh-privatekey"]
-        #ssh_private_key = base64.b64decode(ssh_private_key_base64).decode()
-        
-
         # Create an SSH client
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
