@@ -6,4 +6,4 @@
   tasks:
     - name: Get environment
       debug:
-        msg: "{{ ansible_private_key_file }}"
+        msg: "{{ credential.ssh_key }}"
