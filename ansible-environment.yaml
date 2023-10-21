@@ -4,7 +4,7 @@
   tasks:
     - name: Get the file name from debug output
       debug:
-        msg: "{{ my_ssh_key_file.stdout }}"  # Replace with the actual message
+        msg: "{{ my_ssh_key_file }}"  # Replace with the actual message
       register: debug_output
 
     - name: Extract the file name from the debug output
