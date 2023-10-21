@@ -1,0 +1,9 @@
+---
+- name: Print Ansible environment
+  hosts: all  # Replace with the hosts or inventory group you want to target
+  gather_facts: yes  # Skip gathering facts to speed up execution
+
+  tasks:
+    - name: Get environment
+      debug:
+        msg: "{{ ansible_private_key_file }}"
