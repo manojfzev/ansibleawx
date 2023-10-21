@@ -15,6 +15,6 @@
       shell: cat "{{ file_name }}"
       register: file_content
 
-    - name: Print file content using msg
-      msg:
-        var: file_content.stdout
+    - name: Print file content using debug module
+      debug:
+        msg: file_content.stdout
