@@ -20,7 +20,7 @@ ssh_username = "ansible"
 ssh_timeout = 5  # Set the SSH timeout in seconds
 
 # Retrieve the SSH key from the environment variable provided by AWX
-ssh_private_key = os.environ.get('AWX_SSH_PRIVATE_KEY')
+ssh_private_key = os.environ.get('ansible_private_key_file')
 
 # Initialize an empty inventory
 inventory = {
