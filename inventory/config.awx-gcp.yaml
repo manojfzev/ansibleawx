@@ -1,0 +1,15 @@
+#Credential_type
+### Input Configuration ###
+fields:
+  - id: my_ssh_key
+    type: string
+    label: Private Key
+    format: ssh_private_key
+    secret: true
+    multiline: true
+required:
+  - my_ssh_key
+
+###Injector configuration###
+env:
+  ansible_private_key_file: '{{ my_ssh_key }}'
