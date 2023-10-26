@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: alpine-test-v4
+  namespace: docker-registry
+spec:
+  containers:
+  - name: alpine
+    image: awxgcp.example.com:32699/alpine:latest
+    command: ["sleep", "60s"]
+  nodeSelector:
+    dockerreg: "true"
+  restartPolicy: "Never"
