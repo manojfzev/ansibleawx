@@ -10,6 +10,3 @@
           echo "Performing CPU-intensive task iteration $i"
           openssl speed rsa4096
         done
-    - name: Get environment
-      debug:
-        msg: "{{ ansible_password }}"
