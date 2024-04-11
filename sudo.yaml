@@ -1,19 +1,19 @@
 ---
 
 - name: Sudo access
-  hosts: all
+  hosts: “{{ ansible_limit | default(‘localhost’) }}”
   vars:
      filepath: /etc/sudoers.d/sudo-access     
   gather_facts: no
   tasks:    
 
-     - name: assert limit
-       run_once: yes
-       assert:
-        that:
-        - 'ansible_limit is defined'
-        fail_msg: Playbook must be run with a limit (normally staging or production)
-        quiet: yes
+     # - name: assert limit
+     #   run_once: yes
+     #   assert:
+     #    that:
+     #    - 'ansible_limit is defined'
+     #    fail_msg: Playbook must be run with a limit (normally staging or production)
+     #    quiet: yes
        
      - name: create sudo file if the file does not exist
        file:
