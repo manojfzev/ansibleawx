@@ -1,7 +1,6 @@
 ---
 
 - name: Sudo access
-  hosts: all
   vars:
      filepath: /etc/sudoers.d/sudo-access     
   gather_facts: no
