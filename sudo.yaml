@@ -1,30 +1,38 @@
 ---
+- name: Check if limit is set
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Check if limit is set
+      fail:
+        msg: "Please specify the limit when running this playbook."
+      when: ansible_play_hosts_all | length == 0
 
 - name: Sudo access
+  hosts: all
   vars:
-     filepath: /etc/sudoers.d/sudo-access     
+    filepath: /etc/sudoers.d/sudo-access
   gather_facts: no
-  tasks:    
-       
-     - name: create sudo file if the file does not exist
-       file:
-          path: "{{ filepath }}"
-          owner: root
-          group: root
-          mode: '0644'
-          state: touch
-       become: yes
-       register: filestat
-       ignore_unreachable: True
-       ignore_errors: True
+  tasks:
+    - name: create sudo file if the file does not exist
+      file:
+        path: "{{ filepath }}"
+        owner: root
+        group: root
+        mode: '0644'
+        state: touch
+      become: yes
+      register: filestat
+      ignore_unreachable: true
+      ignore_errors: true
 
-     - name:  Add sudo access to the file
-       lineinfile:
-          path: "{{ filepath }}"
-          line: "testuser ALL=(ALL) NOPASSWD:ALL"
-          validate: /usr/sbin/visudo -cf %s
-       become: yes
-       register: appendstat
-       ignore_unreachable: True
-       ignore_errors: True
-       when: filestat is not unreachable and filestat.failed == false
+    - name: Add sudo access to the file
+      lineinfile:
+        path: "{{ filepath }}"
+        line: "testuser ALL=(ALL) NOPASSWD:ALL"
+        validate: /usr/sbin/visudo -cf %s
+      become: yes
+      register: appendstat
+      ignore_unreachable: true
+      ignore_errors: true
+      when: filestat is not unreachable and filestat.failed == false
