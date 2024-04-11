@@ -1,6 +1,6 @@
 ---
 - name: Check if limit is set
-  hosts: all
+  hosts: localhost
   gather_facts: no
   tasks:
     - name: Check if limit is set
@@ -10,29 +10,27 @@
 
 - name: Sudo access
   hosts: all
-  vars:
-    filepath: /etc/sudoers.d/sudo-access
   gather_facts: no
   tasks:
     - name: create sudo file if the file does not exist
       file:
-        path: "{{ filepath }}"
+        path: /etc/sudoers.d/sudo-access
         owner: root
         group: root
         mode: '0644'
         state: touch
       become: yes
       register: filestat
-      ignore_unreachable: true
-      ignore_errors: true
+      ignore_unreachable: True
+      ignore_errors: True
 
     - name: Add sudo access to the file
       lineinfile:
-        path: "{{ filepath }}"
+        path: /etc/sudoers.d/sudo-access
         line: "testuser ALL=(ALL) NOPASSWD:ALL"
         validate: /usr/sbin/visudo -cf %s
       become: yes
       register: appendstat
-      ignore_unreachable: true
-      ignore_errors: true
+      ignore_unreachable: True
+      ignore_errors: True
       when: filestat is not unreachable and filestat.failed == false
