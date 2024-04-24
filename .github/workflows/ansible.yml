@@ -27,7 +27,7 @@ jobs:
       # Step to check for prohibited 'hosts: all' pattern in playbooks
       - name: Check for host all is set
         run: |
-          # Check all YAML files for 'hosts: all'
+          # Check all YAML files for host for all
           for file in $(find . -name '*.yml'); do
             if grep -q "hosts: all" "$file"; then
               echo "Error: Playbook $file contains 'hosts: all'."
