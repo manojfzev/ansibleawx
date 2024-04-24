@@ -24,7 +24,7 @@ jobs:
           sudo apt-get install -y ansible
 
       # Step to check for prohibited 'hosts: all' pattern in playbooks
-      - name: Check for 'hosts: all'
+      - name: Check for host all is set
         run: |
           # Check all YAML files for 'hosts: all'
           for file in $(find . -name '*.yml'); do
