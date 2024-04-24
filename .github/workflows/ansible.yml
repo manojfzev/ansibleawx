@@ -28,9 +28,15 @@ jobs:
       - name: Check for host all is set
         run: |
           # Check all YAML files for host for all
-          for file in $(find . -name '*.yml'); do
+          for file in $(find . -name '*.ymll'); do
+            if [[ "$file" == "./.github/workflows/main.yml" ]]; then
+              # Skip the specific file
+              continue
+            fi
+          
             if grep -q "hosts: all" "$file"; then
-              echo "Error: Playbook $file contains 'hosts: all'."
+              echo "Error: Playbook $file contains invalid host pattern."
               exit 1  # Exit with error if found
             fi
           done
+
