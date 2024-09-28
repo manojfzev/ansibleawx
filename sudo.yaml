@@ -1,7 +1,7 @@
 ---
 
 - name: Sudo access
-  hosts: "{{ ansible_limit if ansible_limit not in ['none', 'all'] else 'invalid' }}"  
+  hosts: all
   vars:
      filepath: /etc/sudoers.d/sudo-access     
   gather_facts: no
