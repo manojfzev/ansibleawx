@@ -36,3 +36,25 @@
         name: apache2
         state: started
       when: env_variable_output.stdout == "true"
+
+    - name: Install Docker on Redhat
+      when: "'RedHat' in ansible_distribution"
+      block:
+        - name: Copy Docker repo
+          copy:
+            src: docker-ce.repo
+            dest: /etc/yum.repos.d/docker-ce.repo
+            owner: root
+            group: root
+            mode: '0644'
+        - name: Install Docker Package on Redhat
+          yum:
+            name: "{{item}}"
+            state: present
+          with_items:
+            - docker-ce
+            - docker-ce-cli
+            - containerd.io
+            - docker-buildx-plugin
+            - docker-compose-plugin
+          ignore_errors: True
