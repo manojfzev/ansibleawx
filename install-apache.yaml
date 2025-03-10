@@ -6,9 +6,9 @@
 
   tasks:
 
-    - name: Install Apache
+    - name: Install Apache for linux server
       apt:
-        name: apache2  # Package name for Apache
+        name: httpd  # Package name for Apache
         state: present  # Ensure Apache is installed
 
     - name: Start Apache and enable on boot
