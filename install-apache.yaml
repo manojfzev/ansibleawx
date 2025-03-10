@@ -21,3 +21,14 @@
       systemd:
         name: apache2
         state: started
+
+    - name: Install Docker on Ubuntu
+      when: "'Debian' in ansible_os_family"
+      block:
+        - name: Install Docker Package on Ubuntu
+          apt:
+            name: docker.io
+            state: present
+        - name: Start and enable Docker services on Ubuntu
+          shell:
+            cmd: systemctl enable --now docker
